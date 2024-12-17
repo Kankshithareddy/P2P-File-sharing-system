@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <style>
+        body {
+            background-color: #e0f7fa; /* Light blue background */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .file-info div {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .file-info div:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        .file-info .file-label {
+            font-weight: bold;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight {
+            background-color: #f2f2f2; /* Light grey background */
+            color: #333; /* Dark text for better readability */
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            min-width: 100px; /* Ensure a minimum width for consistency */
+            text-align: center;
+            border: 1px solid #ddd; /* Light border for better separation */
+        }
+
+        .highlight:hover {
+            background-color: #e0e0e0; /* Slightly darker grey on hover */
+        }
+
+        .back-button {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Results for "{{ query }}"</h1>
+        {% if results %}
+            {% for file in results %}
+            <div class="file-info">
+                <div>
+                    <span class="file-label">File Name:</span>
+                    <span>{{ file[2].split('/')[-1] }}</span>
+                </div>
+                <div>
+                    <span class="file-label">Uploader:</span>
+                    <span>{{ file[1] }}</span>
+                </div>
+                <div>
+                    <span class="file-label">File Size:</span>
+                    <span>
+                        {% if file[3] < 1024 %}
+                            {{ file[3] }} bytes
+                        {% elif file[3] < 1024 * 1024 %}
+                            {{ (file[3] / 1024)|round(2) }} KB
+                        {% else %}
+                            {{ (file[3] / (1024 * 1024))|round(2) }} MB
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    <span class="file-label">File Type:</span>
+                    <span>{{ file[4] or 'Unknown' }}</span>
+                </div>
+                <div>
+                    <span class="file-label">Full Path:</span>
+                    <span>{{ file[2] }}</span>
+                </div>
+                <div>
+                    <span class="file-label">Actions:</span>
+                    <span class="highlight"><a href="{{ url_for('download_file', file_id=file[0]) }}">Download</a></span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No files found matching "{{ query }}"</p>
+        {% endif %}
+        <div class="back-button">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
